@@ -45,6 +45,7 @@ const decodePubSubMessage = (pubSubMessage: any) => {
     const jsonData = JSON.parse(decodedData);
     logger.info('Successfully parsed message data:', {
       notificationType: jsonData.notificationType,
+      type: jsonData.type,
       resourceType: jsonData.resource?.typeId,
       resourceId: jsonData.resource?.id
     });
@@ -60,12 +61,12 @@ const decodePubSubMessage = (pubSubMessage: any) => {
  * Routes the message to the appropriate handler based on notification type
  */
 const routeApprovalFlowMessage = async (jsonData: any) => {
-  const { notificationType } = jsonData;
+  const { type } = jsonData;
 
-  logger.info(`Processing notification type: ${notificationType}`);
+  logger.info(`Processing notification type: ${type}`);
   logger.debug('Full message data structure:', JSON.stringify(jsonData, null, 2));
 
-  switch (notificationType) {
+  switch (type) {
     case 'ResourceCreated':
       logger.info('Skipping ResourceCreated notification - no processing needed');
       throw new CustomError(
@@ -133,9 +134,9 @@ const routeApprovalFlowMessage = async (jsonData: any) => {
       break;
 
     default:
-      logger.warn(`Unhandled notification type: ${notificationType}`);
+      logger.warn(`Unhandled notification type: ${type}`);
       logger.debug('Available notification types: ResourceCreated, ApprovalFlowCreated, ApprovalFlowApproved, ApprovalFlowRejected, ApprovalFlowCompleted');
-      throw new CustomError(400, `Unsupported notification type: ${notificationType}`);
+      throw new CustomError(400, `Unsupported notification type: ${type}`);
   }
 };
 
