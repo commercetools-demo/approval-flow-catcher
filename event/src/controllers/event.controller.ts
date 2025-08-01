@@ -161,7 +161,7 @@ export const post = async (request: Request, response: Response) => {
     logger.info('Step 2: Decoding and parsing message data');
     const jsonData = decodePubSubMessage(pubSubMessage);
     logger.info('Message data parsing successful');
-    logger.debug('Message data:', JSON.stringify(jsonData, null, 2));
+    logger.debug('Message data:' + JSON.stringify(jsonData, null, 2));
     
     // Route to the appropriate approval flow handler
     logger.info('Step 3: Routing to approval flow handler');
