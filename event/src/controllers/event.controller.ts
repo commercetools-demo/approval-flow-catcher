@@ -134,9 +134,7 @@ const routeApprovalFlowMessage = async (jsonData: any) => {
       break;
 
     default:
-      logger.warn(`Unhandled notification type: ${type}`);
-      logger.debug('Available notification types: ResourceCreated, ApprovalFlowCreated, ApprovalFlowApproved, ApprovalFlowRejected, ApprovalFlowCompleted');
-      throw new CustomError(400, `Unsupported notification type: ${type}`);
+      throw new CustomError(200, `Unsupported notification type: ${type}`);
   }
 };
 
@@ -171,7 +169,7 @@ export const post = async (request: Request, response: Response) => {
     // Return success response
     const processingTime = Date.now() - startTime;
     logger.info(`=== Message processing completed successfully in ${processingTime}ms ===`);
-    response.status(204).send();
+    response.status(200).send();
   } catch (error) {
     const processingTime = Date.now() - startTime;
     logger.error(`=== Message processing failed after ${processingTime}ms ===`);
