@@ -293,13 +293,16 @@ export const sendApprovalNotifications = async (
       .map((customer) => ({
         email: customer.email,
         name: customer.firstName || customer.lastName || customer.email,
-      }));
+      }))
+      .filter((recipient, index, self) =>
+        index === self.findIndex((t) => t.email === recipient.email)
+      );
 
-    logger.debug('Customer processing results:', {
+    logger.debug('Customer processing results:' + JSON.stringify({
       totalCustomers: customers.length,
       customersWithEmail: recipients.length,
       customersWithoutEmail: customers.length - recipients.length
-    });
+    }, null, 2));
 
     if (recipients.length === 0) {
       logger.warn('No customers with valid email addresses found');
@@ -307,7 +310,7 @@ export const sendApprovalNotifications = async (
       return;
     }
 
-    logger.debug('Recipients for notifications:', recipients);
+    logger.debug('Recipients for notifications:' + JSON.stringify(recipients, null, 2));
 
     logger.info(`Sending notifications to ${recipients.length} recipients...`);
     await sendBulkEmails(
@@ -446,9 +449,6 @@ export const handleApprovalFlowApproved = async (approvalFlowId: string, associa
         associateRoleKeys,
         businessUnitKey
       );
-      
-      logger.info('Step 5: Sending approval notifications...');
-      await sendApprovalNotifications(customers, approvalFlowId);
     } else {
       logger.info('No pending approvers - skipping notifications');
     }
